@@ -32,4 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 /mvnw
-.mvn
+/mvnw.cmd
+/talablar.txt
+/.mvn/wrapper/maven-wrapper.properties
