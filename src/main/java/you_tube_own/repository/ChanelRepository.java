@@ -32,4 +32,6 @@ public interface ChanelRepository extends CrudRepository<ChanelEntity,String> {
 
     List<ChanelEntity> findAllByProfileId(Long profileId);
 
+    Optional<ChanelEntity> findByProfileId(Long profileId);
+
 }

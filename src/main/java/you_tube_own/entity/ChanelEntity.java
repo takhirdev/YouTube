@@ -43,7 +43,7 @@ public class ChanelEntity {
     private Long profileId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id",insertable=false, updatable=false)
-    private ProfileEntity profileEntity;
+    private ProfileEntity profile;
 
     @Column(name = "created")
     private LocalDateTime created = LocalDateTime.now();

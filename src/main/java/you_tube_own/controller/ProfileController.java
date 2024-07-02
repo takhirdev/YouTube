@@ -56,8 +56,8 @@ public class ProfileController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = "/getAll")
-    public ResponseEntity<Page<ProfileDto>> getAll(@RequestParam int pageNumber,
-                                                   @RequestParam int pageSize) {
+    public ResponseEntity<Page<ProfileDto>> getAll(@RequestParam(defaultValue = "1") int pageNumber,
+                                                   @RequestParam(defaultValue = "5") int pageSize) {
         Page<ProfileDto> response = profileService.getAll(pageNumber - 1, pageSize);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

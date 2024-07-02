@@ -40,8 +40,8 @@ public class AttachController {
 
     @GetMapping("/getAll")
     public ResponseEntity<Page<AttachDto>> getAll(@RequestParam(defaultValue = "1") int pageNumber,
-                                                      @RequestParam(defaultValue = "5") int pageSize) {
-        Page<AttachDto> response = attachService.getAll(pageNumber-1,pageSize);
+                                                  @RequestParam(defaultValue = "5") int pageSize) {
+        Page<AttachDto> response = attachService.getAll(pageNumber - 1, pageSize);
         return ResponseEntity.ok(response);
     }
 

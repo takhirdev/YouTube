@@ -54,16 +54,16 @@ public class ChanelController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getAll")
-    public ResponseEntity<Page<ChanelDto>> getAll(@RequestParam int pageNumber,
-                                                  @RequestParam int pageSize) {
+    public ResponseEntity<Page<ChanelDto>> getAll(@RequestParam(defaultValue = "1") int pageNumber,
+                                                  @RequestParam(defaultValue = "5") int pageSize) {
         Page<ChanelDto> response = chanelService.getAll(pageNumber-1,pageSize);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/byId/{chanelId}")
-    public ResponseEntity<ChanelDto> getById(@PathVariable String chanelId) {
-       ChanelDto response = chanelService.getById(chanelId);
+    public ResponseEntity<ChanelDto> getChanelById(@PathVariable String chanelId) {
+       ChanelDto response = chanelService.getChanelById(chanelId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

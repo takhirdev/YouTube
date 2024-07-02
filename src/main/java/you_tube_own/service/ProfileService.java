@@ -132,7 +132,7 @@ public class ProfileService {
         dto.setName(entity.getName());
         dto.setSurname(entity.getSurname());
         dto.setEmail(entity.getEmail());
-        dto.setMainPhotoUrl(entity.getPhotoId());
+        dto.setPhotoUrl(entity.getPhotoId());
         return dto;
     }
 }
