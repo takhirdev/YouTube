@@ -23,6 +23,11 @@ public interface ProfileRepository extends CrudRepository<ProfileEntity, Integer
     @Query("update ProfileEntity set email =?2 where id =?1")
     void updateEmail(Integer profileId, String email);
 
+    @Transactional
+    @Modifying
+    @Query("update ProfileEntity set photoId =?2 where id =?1")
+    void updatePhoto(Long profileId, String photoId);
+
     boolean existsByEmail(String email);
 
     Page<ProfileEntity> findAllBy(Pageable pageable);

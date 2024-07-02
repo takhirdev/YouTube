@@ -26,6 +26,7 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final EmailSenderService emailSenderService;
     private final EmailHistoryService emailHistoryService;
+    private final AttachService attachService;
 
     public String changePassword(String oldPassword, String newPassword) {
         ProfileEntity profile = SecurityUtil.getProfile();
@@ -79,14 +80,15 @@ public class ProfileService {
         return toDto(saved);
     }
 
-    public Boolean updatePhoto(String photoId) {
+    public void updatePhoto(String photoId) {
         ProfileEntity profile = SecurityUtil.getProfile();
 
         String oldPhoto = profile.getPhotoId();
-        profile.setPhotoId(photoId);
-        profileRepository.save(profile);
-        ///////   delete old attach
-        return true;
+        profileRepository.updatePhoto(profile.getId(),photoId);
+
+        if (oldPhoto != null) {
+            attachService.delete(oldPhoto);
+        }
     }
 
     public Page<ProfileDto> getAll(int pageNumber, int pageSize) {
@@ -101,6 +103,11 @@ public class ProfileService {
 
         long totalElements = entityPage.getTotalElements();
         return new PageImpl<>(list, pageable, totalElements);
+    }
+
+    public ProfileDto getCurrentProfile() {
+        ProfileEntity profile = SecurityUtil.getProfile();
+        return toDto(profile);
     }
 
     public ProfileDto createProfile(ProfileCreateDto dto) {
