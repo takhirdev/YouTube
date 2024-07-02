@@ -91,7 +91,7 @@ public class AttachService {
         }
     }
 
-    public Page<AttachDto> pagination(int pageNumber, int pageSize) {
+    public Page<AttachDto> getAll(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<AttachEntity> pageEntity = attachRepository.findAllBy(pageable);
         List<AttachDto> list = pageEntity

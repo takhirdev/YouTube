@@ -5,14 +5,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import you_tube_own.dto.JwtDTO;
 import you_tube_own.dto.profile.ProfileCreateDto;
 import you_tube_own.dto.profile.ProfileDto;
 import you_tube_own.dto.profile.ProfileUpdateDto;
 import you_tube_own.entity.ProfileEntity;
-import you_tube_own.enums.ProfileStatus;
+import you_tube_own.enums.Status;
 import you_tube_own.exception.AppBadException;
 import you_tube_own.repository.ProfileRepository;
 import you_tube_own.util.JwtUtil;
@@ -20,7 +19,6 @@ import you_tube_own.util.MD5Util;
 import you_tube_own.util.SecurityUtil;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +29,7 @@ public class ProfileService {
 
     public String changePassword(String oldPassword, String newPassword) {
         ProfileEntity profile = SecurityUtil.getProfile();
-        if (!profile.getStatus().equals(ProfileStatus.ACTIVE)) {
+        if (!profile.getStatus().equals(Status.ACTIVE)) {
             throw new AppBadException("profile status not active");
         }
         if (!profile.getPassword().equals(MD5Util.getMd5(oldPassword))) {
@@ -45,7 +43,7 @@ public class ProfileService {
     public String changeEmail(String newEmail) {
         ProfileEntity profile = SecurityUtil.getProfile();
 
-        if (!profile.getStatus().equals(ProfileStatus.ACTIVE)) {
+        if (!profile.getStatus().equals(Status.ACTIVE)) {
             throw new AppBadException("profile status not active");
         }
         if (profile.getEmail().equals(newEmail) || profileRepository.existsByEmail(newEmail)) {
@@ -71,7 +69,7 @@ public class ProfileService {
     public ProfileDto update(ProfileUpdateDto dto) {
         ProfileEntity profile = SecurityUtil.getProfile();
 
-        if (!profile.getStatus().equals(ProfileStatus.ACTIVE)) {
+        if (!profile.getStatus().equals(Status.ACTIVE)) {
             throw new AppBadException("profile status not active");
         }
 
@@ -91,7 +89,7 @@ public class ProfileService {
         return true;
     }
 
-    public Page<ProfileDto> pagination(int pageNumber, int pageSize) {
+    public Page<ProfileDto> getAll(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<ProfileEntity> entityPage = profileRepository.findAllBy(pageable);
         List<ProfileDto> list = entityPage
@@ -114,7 +112,7 @@ public class ProfileService {
         entity.setSurname(dto.getSurname());
         entity.setEmail(dto.getEmail());
         entity.setPassword(MD5Util.getMd5(dto.getPassword()));
-        entity.setStatus(ProfileStatus.ACTIVE);
+        entity.setStatus(Status.ACTIVE);
         entity.setRole(dto.getRole());
 
         ProfileEntity saved = profileRepository.save(entity);

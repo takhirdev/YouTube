@@ -6,15 +6,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import you_tube_own.dto.CategoryDto;
 import you_tube_own.dto.TagDto;
-import you_tube_own.entity.CategoryEntity;
 import you_tube_own.entity.TagEntity;
 import you_tube_own.exception.AppBadException;
 import you_tube_own.repository.TagRepository;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -44,7 +41,7 @@ public class TagService {
         tagRepository.delete(tagEntity);
     }
 
-    public List<TagDto> getList() {
+    public List<TagDto> getAll() {
         Iterable<TagEntity> all = tagRepository.findAll();
         List<TagDto> list = new LinkedList<>();
         for (TagEntity tagEntity : all) {
@@ -57,7 +54,7 @@ public class TagService {
         return list;
     }
 
-    public Page<TagDto> getList(int pageNumber, int pageSize) {
+    public Page<TagDto> getAll(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<TagEntity> entityPage = tagRepository.findAllBy(pageable);
         List<TagDto> list = entityPage.getContent()

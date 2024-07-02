@@ -5,11 +5,10 @@ import org.springframework.stereotype.Service;
 import you_tube_own.dto.JwtDTO;
 import you_tube_own.dto.profile.ProfileDto;
 import you_tube_own.dto.profile.LoginDto;
-import you_tube_own.dto.profile.ProfileCreateDto;
 import you_tube_own.dto.profile.ProfileRegistrDto;
 import you_tube_own.entity.ProfileEntity;
 import you_tube_own.enums.ProfileRole;
-import you_tube_own.enums.ProfileStatus;
+import you_tube_own.enums.Status;
 import you_tube_own.exception.AppBadException;
 import you_tube_own.repository.ProfileRepository;
 import you_tube_own.util.JwtUtil;
@@ -35,7 +34,7 @@ public class AuthService {
         entity.setEmail(dto.getEmail());
         entity.setPassword(MD5Util.getMd5(dto.getPassword()));
         entity.setRole(ProfileRole.ROLE_USER);
-        entity.setStatus(ProfileStatus.BLOCK);
+        entity.setStatus(Status.BLOCK);
         ProfileEntity saved = profileRepository.save(entity);
 
         String token = JwtUtil.generateToken(saved.getId(), saved.getEmail(), saved.getRole());
@@ -50,11 +49,11 @@ public class AuthService {
 
         emailHistoryService.isNotExpiredEmail(profile.getEmail());
 
-        if (!profile.getStatus().equals(ProfileStatus.BLOCK)) {
+        if (!profile.getStatus().equals(Status.BLOCK)) {
             throw new AppBadException("Registration not completed");
         }
 
-        profileRepository.updateStatus(profile.getId(), ProfileStatus.ACTIVE);
+        profileRepository.updateStatus(profile.getId(), Status.ACTIVE);
         return "registration finished successfully ";
     }
 
@@ -66,7 +65,7 @@ public class AuthService {
             throw new AppBadException("Wrong password");
         }
 
-        if (!profile.getStatus().equals(ProfileStatus.ACTIVE)) {
+        if (!profile.getStatus().equals(Status.ACTIVE)) {
             throw new AppBadException("status not active");
         }
         ProfileDto response = new ProfileDto();

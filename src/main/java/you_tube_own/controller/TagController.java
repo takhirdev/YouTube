@@ -38,9 +38,9 @@ public class TagController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getAll")
-    public ResponseEntity<Page<TagDto>> getList(@RequestParam(defaultValue = "1") int pageNumber,
-                                                @RequestParam(defaultValue = "5") int pageSize) {
-        Page<TagDto> response = tagService.getList(pageNumber - 1, pageSize);
+    public ResponseEntity<Page<TagDto>> getAll(@RequestParam(defaultValue = "1") int pageNumber,
+                                               @RequestParam(defaultValue = "5") int pageSize) {
+        Page<TagDto> response = tagService.getAll(pageNumber - 1, pageSize);
         return ResponseEntity.ok(response);
     }
 }

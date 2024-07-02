@@ -41,7 +41,7 @@ public class CategoryService {
         categoryRepository.delete(entity);
     }
 
-    public Page<CategoryDto> getList(int pageNumber, int pageSize) {
+    public Page<CategoryDto> getAll(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<CategoryEntity> entityPage = categoryRepository.findAllBy(pageable);
         List<CategoryDto> list = entityPage.getContent()

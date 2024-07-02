@@ -4,7 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import you_tube_own.entity.ProfileEntity;
-import you_tube_own.enums.ProfileStatus;
+import you_tube_own.enums.Status;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +42,7 @@ public class CustomUserDetail implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return profile.getStatus().equals(ProfileStatus.ACTIVE);
+        return profile.getStatus().equals(Status.ACTIVE);
     }
 
     @Override

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import you_tube_own.entity.ProfileEntity;
-import you_tube_own.enums.ProfileStatus;
+import you_tube_own.enums.Status;
 
 import java.util.Optional;
 
@@ -16,7 +16,7 @@ public interface ProfileRepository extends CrudRepository<ProfileEntity, Integer
     @Transactional
     @Modifying
     @Query("update ProfileEntity set status =?2 where id =?1")
-    void updateStatus(Long profileId, ProfileStatus status);
+    void updateStatus(Long profileId, Status status);
 
     @Transactional
     @Modifying

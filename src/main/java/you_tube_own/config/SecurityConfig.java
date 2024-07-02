@@ -55,6 +55,7 @@ public class SecurityConfig {
                     .requestMatchers("/profile/verification/*").permitAll()
                     .requestMatchers("/profile/**").hasAnyRole("USER", "ADMIN")
                     .requestMatchers("/attach/**").permitAll()
+                    .requestMatchers("/chanel/**").permitAll()
 
                     // swagger
                     .requestMatchers("/v2/api-docs").permitAll()

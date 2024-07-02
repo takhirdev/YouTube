@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import you_tube_own.enums.ProfileRole;
-import you_tube_own.enums.ProfileStatus;
+import you_tube_own.enums.Status;
 
 import java.time.LocalDateTime;
 @Setter
@@ -30,7 +30,7 @@ public class ProfileEntity {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private ProfileStatus status;
+    private Status status;
 
     @Column(name = "visible")
     private Boolean visible = Boolean.TRUE;

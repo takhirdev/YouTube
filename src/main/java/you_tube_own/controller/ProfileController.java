@@ -54,10 +54,10 @@ public class ProfileController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping(value = "/pagination")
-    public ResponseEntity<Page<ProfileDto>> pagination(@RequestParam int pageNumber,
-                                                       @RequestParam int pageSize) {
-        Page<ProfileDto> response = profileService.pagination(pageNumber - 1, pageSize);
+    @GetMapping(value = "/getAll")
+    public ResponseEntity<Page<ProfileDto>> getAll(@RequestParam int pageNumber,
+                                                   @RequestParam int pageSize) {
+        Page<ProfileDto> response = profileService.getAll(pageNumber - 1, pageSize);
         return ResponseEntity.ok(response);
     }
 

@@ -38,10 +38,10 @@ public class AttachController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @GetMapping("/pagination")
-    public ResponseEntity<Page<AttachDto>> pagination(@RequestParam(defaultValue = "1") int pageNumber,
+    @GetMapping("/getAll")
+    public ResponseEntity<Page<AttachDto>> getAll(@RequestParam(defaultValue = "1") int pageNumber,
                                                       @RequestParam(defaultValue = "5") int pageSize) {
-        Page<AttachDto> response = attachService.pagination(pageNumber-1,pageSize);
+        Page<AttachDto> response = attachService.getAll(pageNumber-1,pageSize);
         return ResponseEntity.ok(response);
     }
 

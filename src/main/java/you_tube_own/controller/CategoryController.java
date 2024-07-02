@@ -40,10 +40,10 @@ public class CategoryController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/getList")
-    public ResponseEntity<Page<CategoryDto>> getList(@RequestParam(defaultValue = "1") int pageNumber,
+    @GetMapping("/getAll")
+    public ResponseEntity<Page<CategoryDto>> getAll(@RequestParam(defaultValue = "1") int pageNumber,
                                                      @RequestParam(defaultValue = "5") int pageSize) {
-        Page<CategoryDto> response = categoryService.getList(pageNumber - 1, pageSize);
+        Page<CategoryDto> response = categoryService.getAll(pageNumber - 1, pageSize);
         return ResponseEntity.ok(response);
     }
 }
