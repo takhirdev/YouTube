@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import you_tube_own.dto.chanel.ChanelCreateDto;
 import you_tube_own.dto.chanel.ChanelDto;
@@ -20,12 +21,14 @@ import java.util.List;
 public class ChanelController {
     private final ChanelService chanelService;
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/create")
     public ResponseEntity<ChanelDto> create(@Valid @RequestBody ChanelCreateDto dto) {
         ChanelDto response = chanelService.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/update/{chanelId}")
     public ResponseEntity<ChanelDto> update(@PathVariable String chanelId,
                                             @Valid @RequestBody ChanelUpdateDto dto) {
@@ -33,6 +36,7 @@ public class ChanelController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/update/photo/{chanelId}")
     public ResponseEntity<String> updatePhoto(@PathVariable String chanelId,
                                               @RequestParam String photoId) {
@@ -40,13 +44,15 @@ public class ChanelController {
         return ResponseEntity.status(HttpStatus.OK).body("chanel photo successfully updated");
     }
 
-    @PutMapping("/update/photo/{chanelId}")
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/update/banner/{chanelId}")
     public ResponseEntity<String> updateBanner(@PathVariable String chanelId,
                                                @RequestParam String bannerId) {
         chanelService.updateBanner(chanelId, bannerId);
         return ResponseEntity.status(HttpStatus.OK).body("chanel banner successfully updated");
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getAll")
     public ResponseEntity<Page<ChanelDto>> getAll(@RequestParam int pageNumber,
                                                   @RequestParam int pageSize) {
@@ -54,12 +60,14 @@ public class ChanelController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/byId/{chanelId}")
     public ResponseEntity<ChanelDto> getById(@PathVariable String chanelId) {
        ChanelDto response = chanelService.getById(chanelId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @PutMapping("/change/status/{chanelId}")
     public ResponseEntity<String> changeStatus(@PathVariable String chanelId,
                                                @RequestParam Status status) {
@@ -67,6 +75,7 @@ public class ChanelController {
         return ResponseEntity.status(HttpStatus.OK).body("chanel status successfully changed");
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/user/chanels")
     public ResponseEntity<List<ChanelDto>> getUserChanels() {
        List<ChanelDto> response = chanelService.getUserChanels();
