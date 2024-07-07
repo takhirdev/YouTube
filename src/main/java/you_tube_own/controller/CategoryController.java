@@ -15,8 +15,6 @@ import you_tube_own.service.CategoryService;
 public class CategoryController {
     private final CategoryService categoryService;
 
-
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<CategoryDto> create(@RequestBody CategoryDto dto) {
         CategoryDto response = categoryService.create(dto);

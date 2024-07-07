@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.web.access.channel.ChannelEntryPoint;
 import org.springframework.stereotype.Service;
 import you_tube_own.dto.AttachDto;
 import you_tube_own.dto.chanel.ChanelDto;
@@ -64,11 +65,19 @@ public class PlayListService {
     }
 
     public Page<PlayListDto> getAll(int pageNumber, int pageSize) {
+        //   id,name,description,status(private,public),order_num,
+        //    channel(id,name,photo(id,url),
+        //    profile(id,name,surname,photo(id,url)
+        //    ))
+
+        // 1-> 100 playlist , 2 - 200  -> 201
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<PlayListEntity> entityPage = playlistRepository.findAllBy(pageable);
         List<PlayListDto> list = entityPage.getContent()
                 .stream()
-                .map(this::toFullInfo)
+                .map( entity -> {
+
+                })
                 .toList();
         long totalElements = entityPage.getTotalElements();
         return new PageImpl<>(list, pageable, totalElements);
@@ -117,7 +126,7 @@ public class PlayListService {
     }
 
     private PlayListDto toFullInfo(PlayListEntity entity) {
-        PlayListDto dto = new PlayListDto();
+          PlayListDto dto = new PlayListDto();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setDescription(entity.getDescription());

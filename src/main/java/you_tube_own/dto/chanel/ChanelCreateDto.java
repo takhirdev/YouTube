@@ -8,10 +8,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ChanelCreateDto {
-    @NotBlank(message = "name is required")
+    @NotBlank(message = "name required")
     @Size(min = 3, message = "name must be at least 3 characters")
     private String name;
-    @NotBlank(message = "description is required")
+    @NotBlank(message = "description required")
     @Size(min = 10, message = "description must be at least 10 characters")
     private String description;
     private String bannerId;
