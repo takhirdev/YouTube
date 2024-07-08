@@ -4,16 +4,17 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import you_tube_own.dto.chanel.ChanelDto;
 import you_tube_own.dto.profile.ProfileDto;
 import you_tube_own.enums.PlayListStatus;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PlayListDto {
     private Long id;

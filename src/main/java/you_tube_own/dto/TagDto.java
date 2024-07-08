@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class TagDto {
-    private Integer id ;
+    private String id ;
 
     @NotBlank(message = "Tag name is required")
     private String name ;

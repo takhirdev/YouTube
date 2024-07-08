@@ -3,6 +3,7 @@ package you_tube_own.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
 
@@ -12,8 +13,8 @@ import java.time.LocalDateTime;
 @Table(name = "tag")
 public class TagEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @UuidGenerator
+    private String id;
 
     @Column(name = "name")
     private String name;

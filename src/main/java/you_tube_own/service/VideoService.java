@@ -1,22 +1,27 @@
 package you_tube_own.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import you_tube_own.dto.AttachDto;
+import you_tube_own.dto.CategoryDto;
 import you_tube_own.dto.chanel.ChanelDto;
+import you_tube_own.dto.playList.PlayListDto;
+import you_tube_own.dto.profile.ProfileDto;
 import you_tube_own.dto.video.VideoCreateDto;
 import you_tube_own.dto.video.VideoDto;
 import you_tube_own.dto.video.VideoUpdateDto;
+import you_tube_own.entity.ProfileEntity;
 import you_tube_own.entity.VideoEntity;
+import you_tube_own.enums.ProfileRole;
 import you_tube_own.enums.VideoStatus;
 import you_tube_own.exception.AppBadException;
+import you_tube_own.mapper.VideoFullInfoMapper;
+import you_tube_own.mapper.VideoShortInfoForAdmin;
+import you_tube_own.mapper.VideoShortInfoMapper;
 import you_tube_own.repository.VideoRepository;
 import you_tube_own.util.SecurityUtil;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,36 +30,33 @@ public class VideoService {
     private final VideoRepository videoRepository;
 
     public String create(VideoCreateDto dto) {
-        VideoEntity saved = videoRepository.save(toEntity(dto));
-        return saved.getId();
+        var entity = VideoEntity.builder()
+                .previewAttachId(dto.getPreviewAttachId())
+                .title(dto.getTitle())
+                .categoryId(dto.getCategoryId())
+                .attachId(dto.getAttachId())
+                .type(dto.getType())
+                .chanelId(dto.getChanelId())
+                .build();
+
+        videoRepository.save(entity);
+        return entity.getId();
     }
 
     public VideoDto update(String videoId, VideoUpdateDto dto) {
         isOwner(videoId);
 
-        VideoEntity entity = getById(videoId);
+        VideoEntity entity = get(videoId);
         entity.setTitle(dto.getTitle() == null ? entity.getTitle() : dto.getTitle());
         entity.setDescription(dto.getDescription() == null ? entity.getDescription() : dto.getDescription());
-        VideoEntity updated = videoRepository.save(entity);
-        return toDto(updated);
-    }
+        videoRepository.save(entity);
 
-    public VideoEntity getById(String videoId) {
-        return videoRepository.findById(videoId)
-                .orElseThrow(() -> new AppBadException("Video not found"));
+        return VideoDto.builder()
+                .id(entity.getId())
+                .title(entity.getTitle())
+                .description(entity.getDescription())
+                .build();
     }
-
-    private VideoEntity toEntity(VideoCreateDto dto) {
-        VideoEntity entity = new VideoEntity();
-        entity.setPreviewAttachId(dto.getPreviewAttachId());
-        entity.setTitle(dto.getTitle());
-        entity.setCategoryId(dto.getCategoryId());
-        entity.setAttachId(dto.getAttachId());
-        entity.setType(dto.getType());
-        entity.setChanelId(dto.getChanelId());
-        return entity;
-    }
-
 
     public String updateStatus(String videoId, VideoStatus status) {
         isOwner(videoId);
@@ -68,83 +70,166 @@ public class VideoService {
 
     public Page<VideoDto> getByCategoryId(int categoryId, int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<VideoEntity> entityPage = videoRepository.findByCategoryId(categoryId, pageable);
+        Page<VideoShortInfoMapper> entityPage = videoRepository.findByCategoryId(categoryId, pageable);
 
         List<VideoDto> list = entityPage.getContent()
                 .stream()
-                .map(this::shortInfo)
+                .map(entity -> shortInfo(entity, false))
                 .toList();
 
         long totalElements = entityPage.getTotalElements();
         return new PageImpl<>(list, pageable, totalElements);
     }
 
-    public Page<VideoDto> getByTitle(String title,int pageNumber, int pageSize) {
+    public Page<VideoDto> getByTitle(String title, int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<VideoEntity> entityPage = videoRepository.findByTitle(title, pageable);
+        Page<VideoShortInfoMapper> entityPage = videoRepository.findByTitle(title, pageable);
 
         List<VideoDto> list = entityPage.getContent()
                 .stream()
-                .map(this::shortInfo)
+                .map(entity -> shortInfo(entity, false))
                 .toList();
 
         long totalElements = entityPage.getTotalElements();
         return new PageImpl<>(list, pageable, totalElements);
     }
-    
-    private VideoDto shortInfo(VideoEntity entity) {
-        // create preview attach
-        AttachDto previewAttach = new AttachDto();
-        previewAttach.setId(entity.getPreviewAttachId());
-        previewAttach.setUrl(entity.getPreviewAttach().getPath() + entity.getPreviewAttachId());
 
+//    public Page<VideoDto> getByTagId(String tagId, int pageNumber, int pageSize) {
+//        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+//        Page<VideoShortInfoMapper> entityPage = videoRepository.findByTagId(tagId, pageable);
+//        List<VideoDto> list = entityPage.getContent()
+//                .stream()
+//                .map(entity -> shortInfo(entity, false))
+//                .toList();
+//
+//        long totalElements = entityPage.getTotalElements();
+//        return new PageImpl<>(list, pageable, totalElements);
+//    }
+
+    public VideoDto getById(String videoId) {
+        VideoFullInfoMapper video = videoRepository.getByVideoId(videoId)
+                .orElseThrow(() -> new AppBadException("video not found"));
+
+        if (video.getStatus().equals(VideoStatus.PRIVATE)) {
+            isOwnerOrAdmin(videoId);
+        }
+        return fullInfo(video);
+    }
+
+    public Page<VideoDto> getAll(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<VideoShortInfoForAdmin> page = videoRepository.findAll(pageable);
+        List<VideoDto> list = page.getContent()
+                .stream()
+                .map(entity -> shortInfo(entity, true))
+                .toList();
+
+        long totalElements = page.getTotalElements();
+        return new PageImpl<>(list, pageable, totalElements);
+    }
+
+    public Page<VideoDto> getAllByChanelId(String chanelId, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<VideoEntity> page = videoRepository.findAllByChanelId(chanelId,pageable);
+        List<VideoDto> list = page.getContent()
+                .stream()
+                .map(entity -> {
+                    return VideoDto.builder()
+                            .id(entity.getId())
+                            .title(entity.getTitle())
+                            .description(entity.getDescription())
+                            .previewAttachId(entity.getPreviewAttachId())
+                            .viewCount(entity.getViewCount())
+                            .publishedDate(entity.getPublishedDate())
+                            .build();
+                }).toList();
+
+        long totalElements = page.getTotalElements();
+        return new PageImpl<>(list, pageable, totalElements);
+    }
+
+    public VideoEntity get(String videoId) {
+        return videoRepository.findById(videoId)
+                .orElseThrow(() -> new AppBadException("Video not found"));
+    }
+
+    private VideoDto fullInfo(VideoFullInfoMapper entity) {
         // create chanel
         ChanelDto chanel = new ChanelDto();
         chanel.setId(entity.getChanelId());
-        chanel.setName(entity.getChanel().getName());
-              // create chanel photo
-        AttachDto chanelPhoto = new AttachDto();
-        chanelPhoto.setUrl(entity.getChanel().getPhoto().getPath() + entity.getChanel().getPhoto().getId());
-        chanel.setPhoto(chanelPhoto);
+        chanel.setName(entity.getChanelName());
+        chanel.setPhotoId(entity.getChanelPhotoId());
 
-        var dto = VideoDto
-                .builder()
-                .id(entity.getId())
-                .title(entity.getTitle())
-                .previewAttach(previewAttach)
-                .publishedDate(entity.getPublishedDate())
-                .chanel(chanel)
-                .viewCount(entity.getViewCount())
-                .build();
-        return dto;
+        // create category
+        CategoryDto category = new CategoryDto();
+        category.setId(entity.getCategoryId());
+        category.setName(entity.getCategoryName());
+                                                  // tagList =============
+        // create video
+        VideoDto video = new VideoDto();
+        video.setId(entity.getId());
+        video.setTitle(entity.getTitle());
+        video.setDescription(entity.getDescription());
+        video.setCategory(category);
+        video.setChanel(chanel);
+        video.setPreviewAttachId(entity.getPreviewAttachId());
+        video.setAttachId(entity.getAttachId());
+        video.setPublishedDate(entity.getPublishDate());
+        video.setViewCount(entity.getViewCount());
+        video.setSharedCount(entity.getSharedCount());
+        video.setLikeCount(entity.getLikeCount());
+        video.setDislikeCount(entity.getDislikeCount());
+        return video;
     }
 
-    private VideoDto toDto(VideoEntity entity) {
-        var dto = VideoDto.builder()
-                .id(entity.getId())
-                .previewAttachId(entity.getPreviewAttachId())
-                .title(entity.getTitle())
-                .categoryId(entity.getCategoryId())
-                .attachId(entity.getAttachId())
-                .type(entity.getType())
-                .chanelId(entity.getChanelId())
-                .createdDate(entity.getCreatedDate())
-                .status(entity.getStatus())
-                .type(entity.getType())
-                .viewCount(entity.getViewCount())
-                .sharedCount(entity.getSharedCount())
-                .likeCount(entity.getLikeCount())
-                .dislikeCount(entity.getDislikeCount())
-                .build();
+    private VideoDto shortInfo(VideoShortInfoForAdmin entity, boolean isAdmin) {
+        // create chanel
+        ChanelDto chanel = new ChanelDto();
+        chanel.setId(entity.getChanelId());
+        chanel.setName(entity.getChanelName());
+        chanel.setPhotoId(entity.getChanelPhotoId());
+
+        // create video
+        VideoDto dto = new VideoDto();
+        dto.setId(entity.getId());
+        dto.setTitle(entity.getTitle());
+        dto.setPreviewAttachId(entity.getPreviewAttachId());
+        dto.setPublishedDate(entity.getPublishDate());
+        dto.setChanel(chanel);
+        dto.setViewCount(entity.getViewCount());
+
+        if (isAdmin) {
+            // create profile
+            ProfileDto profile = new ProfileDto();
+            profile.setId(entity.getProfileId());
+            profile.setName(entity.getProfileName());
+            profile.setSurname(entity.getProfileSurname());
+            dto.setProfile(profile);
+
+            // create playlist
+            PlayListDto playList = new PlayListDto();
+            playList.setId(entity.getPlaylistId());
+            playList.setName(entity.getPlaylistName());
+            dto.setPlayList(playList);
+        }
+
         return dto;
     }
-
 
     private void isOwner(String videoId) {
-        Long ownerId = videoRepository.findOwnerByVideoId(videoId);
+        Long ownerId = videoRepository.findOwnerIdByVideoId(videoId);
         Long currentUserId = SecurityUtil.getProfileId();
         if (!ownerId.equals(currentUserId)) {
-            throw new AppBadException("NO access to update this video");
+            throw new AppBadException("No access to update this video");
+        }
+    }
+
+    private void isOwnerOrAdmin(String videoId) {
+        Long ownerId = videoRepository.findOwnerIdByVideoId(videoId);
+        ProfileEntity currentUser = SecurityUtil.getProfile();
+        if (!ownerId.equals(currentUser.getId())
+                && !currentUser.getRole().equals(ProfileRole.ROLE_ADMIN)) {
+            throw new AppBadException("No access to get this video");
         }
     }
 }

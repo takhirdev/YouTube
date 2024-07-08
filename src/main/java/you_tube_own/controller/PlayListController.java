@@ -25,8 +25,8 @@ public class PlayListController {
     private final PlayListService playListService;
 
     @PostMapping("/create")
-    public ResponseEntity<PlayListDto> create(@Valid @RequestBody PlayListCreateDto dto) {
-        PlayListDto response = playListService.create(dto);
+    public ResponseEntity<Long> create(@Valid @RequestBody PlayListCreateDto dto) {
+        long response = playListService.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

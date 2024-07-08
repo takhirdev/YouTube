@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import you_tube_own.entity.PlayListEntity;
 import you_tube_own.enums.PlayListStatus;
+import you_tube_own.mapper.PlaylistFullInfoMapper;
 
 import java.util.List;
 
@@ -17,32 +18,38 @@ public interface PlaylistRepository extends CrudRepository<PlayListEntity, Long>
     @Query("update PlayListEntity set status = ?2 where id = ?1")
     void updateStatus(Long playlistId, PlayListStatus status);
 
-    Page<PlayListEntity> findAllBy(Pageable pageable);
+    @Query( " SELECT ch.profileId FROM PlayListEntity AS pl " +
+            " INNER JOIN pl.chanel AS ch " +
+            " WHERE pl.id = ?1")
+    long findOwnerIdByPlaylistId(Long playlistId);
 
+    @Query(" select pl.id, pl.name,pl.description,pl.status, pl.orderNumber," +
+            " ch.id, ch.name, ch.photoId, " +
+            " p.id, p.name, p.surname, p.photoId " +
+            " From PlayListEntity  as pl " +
+            " inner join pl.chanel as ch " +
+            " inner join ch.profile as p " +
+            " ORDER BY pl.orderNumber DESC ")
+    Page<PlaylistFullInfoMapper> findAllBy(Pageable pageable);
 
-    //   id,name,description,status(private,public),order_num,
-    //    channel(id,name,photo(id,url),
-    //    profile(id,name,surname,photo(id,url)
-    //    ))
-
-//    @Query("select pl.id, pl.name,pl.description,pl.status, pl.orderNumber," +
-//            " ch.id, ch.name, ch.photoId, " +
-//            " p.id, p.name, p.surname, p.photoId " +
-//            " From PlayListEntity  as pl " +
-//            " inner join pl.chanel as ch " +
-//            " inner join ch.profile as p " +
-//            " ")
-//    Page<PlayListInfoMapper> findAllChannel(Pageable pageable);
-
-    @Query("select count (p) from PlayListEntity  p ")
+    @Query(" select count (p) from PlayListEntity  p ")
     int videoCount();
 
-    @Query(" SELECT playlist " +
-            " FROM PlayListEntity AS playlist " +
-            " JOIN FETCH playlist.chanel AS channel " +
-            " JOIN FETCH channel.profile AS profile " +
-            " WHERE profile.id = :userId")
-    List<PlayListEntity> getByUserId(Long userId);
+    @Query( " select pl.id, pl.name,pl.description,pl.status, pl.orderNumber," +
+            " ch.id, ch.name, ch.photoId, " +
+            " p.id, p.name, p.surname, p.photoId " +
+            " From PlayListEntity  as pl " +
+            " inner join pl.chanel as ch " +
+            " inner join ch.profile as p "+
+            " WHERE p.id = ?1" +
+            " ORDER BY pl.orderNumber DESC ")
+    List<PlaylistFullInfoMapper> getByUserId(Long userId);
 
+
+//    @Query( " select pl.id, pl.name, " +
+//            " ch.id, ch.name, (select count (T) from PlayListEntity as T) as videoCount " +
+//            " From PlayListEntity  as pl " +
+//            " inner join pl.chanel as ch " +
+//            " WHERE ch.id = ?1 ")
     List<PlayListEntity> findAllByChanelId(String chanelId);
 }

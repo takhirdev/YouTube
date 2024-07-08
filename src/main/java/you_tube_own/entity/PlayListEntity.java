@@ -1,15 +1,14 @@
 package you_tube_own.entity;
 
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import you_tube_own.enums.PlayListStatus;
 
 import java.time.LocalDateTime;
-
-@Getter
-@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 @Entity
 @Table(name = "playlist")
 public class PlayListEntity {

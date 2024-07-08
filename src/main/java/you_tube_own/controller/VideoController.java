@@ -27,14 +27,14 @@ public class VideoController {
     @PutMapping("/update/detail/{videoId}")
     public ResponseEntity<VideoDto> updateDetail(@PathVariable String videoId,
                                                  @Valid @RequestBody VideoUpdateDto dto) {
-        VideoDto response = videoService.update(videoId,dto);
+        VideoDto response = videoService.update(videoId, dto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PutMapping("/update/status/{videoId}")
     public ResponseEntity<String> updateStatus(@PathVariable String videoId,
                                                @RequestParam VideoStatus status) {
-        String response = videoService.updateStatus(videoId,status);
+        String response = videoService.updateStatus(videoId, status);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -45,17 +45,46 @@ public class VideoController {
 
     @GetMapping("/byCategoryId/{categoryId}")
     public ResponseEntity<Page<VideoDto>> getByCategoryId(@PathVariable int categoryId,
-                                                @RequestParam(defaultValue = "1") int pageNumber,
-                                                @RequestParam(defaultValue = "5") int pageSize) {
-        Page<VideoDto> response = videoService.getByCategoryId(categoryId,pageNumber-1,pageSize);
+                                                          @RequestParam(defaultValue = "1") int pageNumber,
+                                                          @RequestParam(defaultValue = "5") int pageSize) {
+        Page<VideoDto> response = videoService.getByCategoryId(categoryId, pageNumber - 1, pageSize);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/byTitle")
+    @GetMapping("/searchByTitle")
     public ResponseEntity<Page<VideoDto>> getByTitle(@RequestParam String title,
                                                      @RequestParam(defaultValue = "1") int pageNumber,
                                                      @RequestParam(defaultValue = "5") int pageSize) {
-        Page<VideoDto> response = videoService.getByTitle(title,pageNumber-1,pageSize);
+        Page<VideoDto> response = videoService.getByTitle(title, pageNumber - 1, pageSize);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+//    @GetMapping("/byTagId/{tagId}") /////////// CHALA
+//    public ResponseEntity<Page<VideoDto>> getByTagId(@PathVariable String tagId,
+//                                                     @RequestParam(defaultValue = "1") int pageNumber,
+//                                                     @RequestParam(defaultValue = "5") int pageSize) {
+//        Page<VideoDto> response = videoService.getByTagId(tagId, pageNumber - 1, pageSize);
+//        return ResponseEntity.status(HttpStatus.OK).body(response);
+//    }
+
+    @GetMapping("/byId/{videoId}")
+    public ResponseEntity<VideoDto> getById(@PathVariable String videoId) {
+        VideoDto response = videoService.getById(videoId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<Page<VideoDto>> getAll(@RequestParam(defaultValue = "1") int pageNumber,
+                                                 @RequestParam(defaultValue = "5") int pageSize) {
+        Page<VideoDto> response = videoService.getAll(pageNumber - 1, pageSize);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/getAllByChanelId/{chanelId}")
+    public ResponseEntity<Page<VideoDto>> getAllByChanelId(@PathVariable String chanelId,
+                                                           @RequestParam(defaultValue = "1") int pageNumber,
+                                                           @RequestParam(defaultValue = "5") int pageSize) {
+        Page<VideoDto> response = videoService.getAllByChanelId(chanelId, pageNumber - 1, pageSize);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

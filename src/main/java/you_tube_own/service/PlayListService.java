@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.web.access.channel.ChannelEntryPoint;
 import org.springframework.stereotype.Service;
 import you_tube_own.dto.AttachDto;
 import you_tube_own.dto.chanel.ChanelDto;
@@ -18,6 +17,7 @@ import you_tube_own.entity.ProfileEntity;
 import you_tube_own.enums.PlayListStatus;
 import you_tube_own.enums.ProfileRole;
 import you_tube_own.exception.AppBadException;
+import you_tube_own.mapper.PlaylistFullInfoMapper;
 import you_tube_own.repository.PlaylistRepository;
 import you_tube_own.util.SecurityUtil;
 
@@ -30,32 +30,40 @@ public class PlayListService {
     private final PlaylistRepository playlistRepository;
     private final AttachService attachService;
 
-    public PlayListDto create(PlayListCreateDto dto) {
-        PlayListEntity entity = toEntity(dto);
-        PlayListEntity saved = playlistRepository.save(entity);
-        return toDto(saved);
+    public long create(PlayListCreateDto dto) {
+        var entity = PlayListEntity.builder()
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .status(dto.getStatus())
+                .chanelId(dto.getChanelId())
+                .orderNumber(dto.getOrderNumber())
+                .build();
+
+        playlistRepository.save(entity);
+        return entity.getId();
     }
 
     public PlayListDto update(Long playlistId, PlayListUpdateDto dto) {
         isOwner(playlistId);
+        PlayListEntity entity = getById(playlistId);
+        entity.setName(dto.getName() == null ? entity.getName() : dto.getName());
+        entity.setDescription(dto.getDescription() == null ? entity.getDescription() : dto.getDescription());
+        entity.setOrderNumber(dto.getOrderNumber() == null ? entity.getOrderNumber() : dto.getOrderNumber());
+        playlistRepository.save(entity);
 
-        PlayListEntity playListEntity = getById(playlistId);
-        if (dto.getName() != null) {
-            playListEntity.setName(dto.getName());
-        }
-        if (dto.getDescription() != null) {
-            playListEntity.setDescription(dto.getDescription());
-        }
-
-        if (dto.getOrderNumber() != null) {
-            playListEntity.setOrderNumber(dto.getOrderNumber());
-        }
-        PlayListEntity saved = playlistRepository.save(playListEntity);
-        return toDto(saved);
+        return PlayListDto.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .description(entity.getDescription())
+                .orderNumber(entity.getOrderNumber())
+                .status(entity.getStatus())
+                .chanelId(entity.getChanelId())
+                .createdDate(entity.getCreatedDate())
+                .build();
     }
 
     public void updateStatus(Long playlistId, PlayListStatus status) {
-        isAdminOrOwner(playlistId);
+        isOwner(playlistId);
         playlistRepository.updateStatus(playlistId, status);
     }
 
@@ -65,19 +73,11 @@ public class PlayListService {
     }
 
     public Page<PlayListDto> getAll(int pageNumber, int pageSize) {
-        //   id,name,description,status(private,public),order_num,
-        //    channel(id,name,photo(id,url),
-        //    profile(id,name,surname,photo(id,url)
-        //    ))
-
-        // 1-> 100 playlist , 2 - 200  -> 201
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<PlayListEntity> entityPage = playlistRepository.findAllBy(pageable);
+        Page<PlaylistFullInfoMapper> entityPage = playlistRepository.findAllBy(pageable);
         List<PlayListDto> list = entityPage.getContent()
                 .stream()
-                .map( entity -> {
-
-                })
+                .map(this::toFullInfo)
                 .toList();
         long totalElements = entityPage.getTotalElements();
         return new PageImpl<>(list, pageable, totalElements);
@@ -94,7 +94,7 @@ public class PlayListService {
         Long userId = SecurityUtil.getProfileId();
         return playlistRepository.getByUserId(userId)
                 .stream()
-                .map(this::toShortInfo)
+                .map(this::toFullInfo)
                 .toList();
     }
 
@@ -125,8 +125,9 @@ public class PlayListService {
         return dto;
     }
 
-    private PlayListDto toFullInfo(PlayListEntity entity) {
-          PlayListDto dto = new PlayListDto();
+    private PlayListDto toFullInfo(PlaylistFullInfoMapper entity) {
+        // create playlist
+        PlayListDto dto = new PlayListDto();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setDescription(entity.getDescription());
@@ -137,60 +138,33 @@ public class PlayListService {
         // create channel
         ChanelDto chanel = new ChanelDto();
         chanel.setId(entity.getChanelId());
-        chanel.setName(entity.getName());
-        // create chanel photo
-        AttachDto chanelAttach = attachService.getDTOWithURL(entity.getChanel().getPhotoId());
-        chanel.setPhoto(chanelAttach);
-
+        chanel.setName(entity.getChanelName());
+        chanel.setPhotoId(entity.getChanelPhotoId());
         dto.setChanel(chanel);
 
         // create profile
         ProfileDto profile = new ProfileDto();
-        profile.setId(entity.getChanel().getProfileId());
-        profile.setName(entity.getChanel().getProfile().getName());
-        profile.setSurname(entity.getChanel().getProfile().getSurname());
-        // create profile photo
-        AttachDto profileAttach = attachService.getDTOWithURL(entity.getChanel().getProfile().getPhotoId());
-        profile.setPhoto(profileAttach);
-
+        profile.setId(entity.getProfileId());
+        profile.setName(entity.getProfileName());
+        profile.setSurname(entity.getProfileSurname());
+        profile.setPhotoId(entity.getProfilePhotoId());
         dto.setProfile(profile);
         return dto;
     }
 
-    private PlayListEntity toEntity(PlayListCreateDto dto) {
-        PlayListEntity entity = new PlayListEntity();
-        entity.setName(dto.getName());
-        entity.setDescription(dto.getDescription());
-        entity.setStatus(dto.getStatus());
-        entity.setChanelId(dto.getChanelId());
-        entity.setOrderNumber(dto.getOrderNumber());
-        return entity;
-    }
-
-    private PlayListDto toDto(PlayListEntity entity) {
-        PlayListDto dto = new PlayListDto();
-        dto.setName(entity.getName());
-        dto.setDescription(entity.getDescription());
-        dto.setStatus(entity.getStatus());
-        dto.setChanelId(entity.getChanelId());
-        dto.setOrderNumber(entity.getOrderNumber());
-        dto.setCreatedDate(entity.getCreatedDate());
-        return dto;
-    }
-
     private void isAdminOrOwner(Long playlistId) {
-        ProfileEntity profile = SecurityUtil.getProfile();
-        PlayListEntity playListEntity = getById(playlistId);
-        if (playListEntity.getChanel().getProfileId() != profile.getId()
-                || !profile.getRole().equals(ProfileRole.ROLE_ADMIN)) {
+        ProfileEntity currentUserId = SecurityUtil.getProfile();
+        Long ownerId = playlistRepository.findOwnerIdByPlaylistId(playlistId);
+        if (!ownerId.equals(currentUserId.getId())
+                && !currentUserId.getRole().equals(ProfileRole.ROLE_ADMIN)) {
             throw new AppBadException("You dont have permission to delete this playlist");
         }
     }
 
     private void isOwner(Long playlistId) {
-        Long profileId = SecurityUtil.getProfileId();
-        PlayListEntity playListEntity = getById(playlistId);
-        if (playListEntity.getChanel().getProfileId() != profileId) {
+        Long currentUserId = SecurityUtil.getProfileId();
+        Long ownerId = playlistRepository.findOwnerIdByPlaylistId(playlistId);
+        if (!ownerId.equals(currentUserId)) {
             throw new AppBadException("You dont have permission to update this playlist");
         }
     }

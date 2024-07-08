@@ -16,8 +16,8 @@ public class ProfileDto {
     private String surname;
     private String email;
     private String password;
-    private String photoUrl;
     private AttachDto photo;
+    private String photoId;
     private LocalDateTime createdDate;
     private ProfileRole role;
     private String jwt;

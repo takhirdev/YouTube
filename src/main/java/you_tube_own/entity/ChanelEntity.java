@@ -7,6 +7,7 @@ import org.hibernate.annotations.UuidGenerator;
 import you_tube_own.enums.Status;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -47,4 +48,7 @@ public class ChanelEntity {
 
     @Column(name = "created")
     private LocalDateTime created = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "chanel")
+    private List<PlayListEntity> playlists;
 }

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 import you_tube_own.enums.VideoStatus;
 import you_tube_own.enums.VidoeType;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -44,12 +43,14 @@ public class VideoEntity {
     @JoinColumn(name = "category_id", insertable = false, updatable = false)
     private CategoryEntity category;
 
+    @Builder.Default
     @Column(name = "created_date")
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(name = "published_date")
     private LocalDateTime publishedDate;
 
+    @Builder.Default
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private VideoStatus status = VideoStatus.PRIVATE;
@@ -58,15 +59,19 @@ public class VideoEntity {
     @Enumerated(EnumType.STRING)
     private VidoeType type;
 
+    @Builder.Default
     @Column(name = "view_count")
     private Integer viewCount = 0;
 
+    @Builder.Default
     @Column(name = "shared_count")
     private Integer sharedCount = 0;
 
+    @Builder.Default
     @Column(name = "like_count")
     private Integer likeCount = 0;
 
+    @Builder.Default
     @Column(name = "dislike_count")
     private Integer dislikeCount = 0;
 
