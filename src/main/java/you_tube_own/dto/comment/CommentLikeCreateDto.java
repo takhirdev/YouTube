@@ -8,16 +8,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import you_tube_own.enums.ReactionType;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class CommentLikeDto {
-    private String id;
-    private Long userId;
+@AllArgsConstructor
+public class CommentLikeCreateDto {
+    @NotBlank(message = "comment id required")
     private String commentId;
+    @NotNull(message = "reaction required")
     private ReactionType reaction;
-    private LocalDateTime createdDate;
 }
