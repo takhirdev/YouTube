@@ -3,7 +3,7 @@ package you_tube_own.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import you_tube_own.dto.CategoryDto;
+import you_tube_own.dto.category.CategoryDto;
 import you_tube_own.dto.chanel.ChanelDto;
 import you_tube_own.dto.playList.PlayListDto;
 import you_tube_own.dto.profile.ProfileDto;
@@ -21,7 +21,6 @@ import you_tube_own.mapper.VideoShortInfoMapper;
 import you_tube_own.repository.VideoRepository;
 import you_tube_own.util.SecurityUtil;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service

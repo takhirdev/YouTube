@@ -1,4 +1,4 @@
-package you_tube_own.dto;
+package you_tube_own.dto.tag;
 
 
 import jakarta.validation.constraints.NotBlank;

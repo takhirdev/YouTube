@@ -3,7 +3,7 @@ package you_tube_own.dto.profile;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
-import you_tube_own.dto.AttachDto;
+import you_tube_own.dto.attach.AttachDto;
 import you_tube_own.enums.ProfileRole;
 import java.time.LocalDateTime;
 

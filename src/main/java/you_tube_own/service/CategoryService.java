@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import you_tube_own.dto.CategoryDto;
+import you_tube_own.dto.category.CategoryDto;
 import you_tube_own.entity.CategoryEntity;
 import you_tube_own.exception.AppBadException;
 import you_tube_own.repository.CategoryRepository;

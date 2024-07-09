@@ -1,4 +1,4 @@
-package you_tube_own.dto;
+package you_tube_own.dto.attach;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;

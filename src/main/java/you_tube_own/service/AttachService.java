@@ -10,7 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import you_tube_own.dto.AttachDto;
+import you_tube_own.dto.attach.AttachDto;
 import you_tube_own.entity.AttachEntity;
 import you_tube_own.exception.AppBadException;
 import you_tube_own.repository.AttachRepository;

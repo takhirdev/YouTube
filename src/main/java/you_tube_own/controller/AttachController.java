@@ -9,7 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import you_tube_own.dto.AttachDto;
+import you_tube_own.dto.attach.AttachDto;
 import you_tube_own.service.AttachService;
 
 @RestController

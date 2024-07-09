@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import you_tube_own.dto.TagDto;
+import you_tube_own.dto.tag.TagDto;
 import you_tube_own.service.TagService;
 
 @RestController
