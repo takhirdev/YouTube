@@ -58,6 +58,7 @@ public class SecurityConfig {
                     .requestMatchers("/chanel/**").permitAll()
                     .requestMatchers("/video/**").hasAnyRole("USER", "ADMIN")
                     .requestMatchers("/category/**").permitAll()
+                    .requestMatchers("/playlist_video/**").permitAll()
                     .requestMatchers("/playlist/**").hasAnyRole("USER", "ADMIN")
 
                     // swagger
