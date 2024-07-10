@@ -7,9 +7,11 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import you_tube_own.dto.chanel.ChanelDto;
 import you_tube_own.dto.profile.ProfileDto;
+import you_tube_own.dto.video.VideoDto;
 import you_tube_own.enums.PlayListStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -22,10 +24,13 @@ public class PlayListDto {
     private String description;
     private PlayListStatus status;
     private String chanelId;
+    private String channelName;
     private ChanelDto chanel;
     private Long profileId;
     private ProfileDto profile;
     private int orderNumber;
     private LocalDateTime createdDate;
-    private Integer videoCount;
+    private Long videoCount;
+    private List<VideoDto> videoList;
+    private Integer totalViewCount;
 }

@@ -5,10 +5,12 @@ import lombok.*;
 import you_tube_own.enums.PlayListStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Entity
 @Table(name = "playlist")
 public class PlayListEntity {
@@ -32,9 +34,10 @@ public class PlayListEntity {
     @Enumerated(EnumType.STRING)
     private PlayListStatus status;
 
-    @Column(name = "order_number")
+    @Column(name = "order_number", updatable = false)
     private Integer orderNumber;
 
+    @Builder.Default
     @Column(name = "created_date")
     private LocalDateTime createdDate = LocalDateTime.now();
 }

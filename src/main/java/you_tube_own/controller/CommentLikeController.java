@@ -37,5 +37,4 @@ public class CommentLikeController {
         Page<CommentLikeDto> response = commentLikeservice.getByUserId(userId, pageNumber - 1, pageSize);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
 }

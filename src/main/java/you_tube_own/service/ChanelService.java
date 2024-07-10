@@ -32,23 +32,19 @@ public class ChanelService {
     }
 
     public ChanelDto update(String chanelId, ChanelUpdateDto dto) {
-        isOwner(chanelId);     // check current user is OWNER this channel
+        ChanelEntity chanelEntity = chanelRepository.findByIdAndProfileIdAndStatus(chanelId, SecurityUtil.getProfileId(),Status.ACTIVE)
+                .orElseThrow(() -> new AppBadException("No access"));    // check current user is OWNER this channel
 
-        ChanelEntity chanelEntity = get(chanelId);
-        if (dto.getName() != null) {
-            chanelEntity.setName(dto.getName());
-        }
-        if (dto.getDescription() != null) {
-            chanelEntity.setDescription(dto.getDescription());
-        }
-        ChanelEntity saved = chanelRepository.save(chanelEntity);
-        return toDto(saved);
+        chanelEntity.setName(dto.getName() == null ? chanelEntity.getName() : dto.getName());
+        chanelEntity.setDescription(dto.getDescription() == null ? chanelEntity.getDescription() : dto.getDescription());
+        chanelRepository.save(chanelEntity);
+        return toDto(chanelEntity);
     }
 
     public void updatePhoto(String chanelId, String newPhotoId) {
-        isOwner(chanelId);      // check current user is OWNER this channel
+        ChanelEntity chanelEntity = chanelRepository.findByIdAndProfileIdAndStatus(chanelId, SecurityUtil.getProfileId(),Status.ACTIVE)
+                .orElseThrow(() -> new AppBadException("No access"));    // check current user is OWNER this channel
 
-        ChanelEntity chanelEntity = get(chanelId);
         String oldPhotoId = chanelEntity.getPhotoId();
         chanelRepository.updatePhotoId(newPhotoId, chanelId);
 
@@ -58,9 +54,9 @@ public class ChanelService {
     }
 
     public void updateBanner(String chanelId, String newBannerId) {
-        isOwner(chanelId);      // check current user is OWNER this channel
+        ChanelEntity chanelEntity = chanelRepository.findByIdAndProfileIdAndStatus(chanelId, SecurityUtil.getProfileId(),Status.ACTIVE)
+                .orElseThrow(() -> new AppBadException("No access"));    // check current user is OWNER this channel
 
-        ChanelEntity chanelEntity = get(chanelId);
         String oldBannerId = chanelEntity.getBannerId();
         chanelRepository.updateBannerId(newBannerId, chanelId);
 
@@ -124,19 +120,7 @@ public class ChanelService {
 
     public ChanelEntity get(String chanelId) {
         return chanelRepository.findById(chanelId)
-                .orElseThrow(() -> new RuntimeException("Chanel not found"));
-    }
-
-    private void isOwner(String chanelId) {
-        Long profileId = SecurityUtil.getProfileId();
-        ChanelEntity chanelEntity = get(chanelId);
-        if (!chanelEntity.getStatus().equals(Status.ACTIVE)) {
-            throw new AppBadException("chanel not active");
-        }
-
-        if (!chanelEntity.getProfileId().equals(profileId)) {
-            throw new AppBadException("You do not have permission to update");
-        }
+                .orElseThrow(() -> new AppBadException("Chanel not found"));
     }
 
     private void isAdminOrOwner(String chanelId) {
@@ -147,7 +131,7 @@ public class ChanelService {
         }
 
         if (!chanelEntity.getProfileId().equals(profile.getId())
-                || !profile.getRole().equals(ProfileRole.ROLE_ADMIN)) {
+                && !profile.getRole().equals(ProfileRole.ROLE_ADMIN)) {
             throw new AppBadException("You do not have permission to change");
         }
     }

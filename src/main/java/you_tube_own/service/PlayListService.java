@@ -1,5 +1,11 @@
 package you_tube_own.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -11,15 +17,22 @@ import you_tube_own.dto.playList.PlayListCreateDto;
 import you_tube_own.dto.playList.PlayListDto;
 import you_tube_own.dto.playList.PlayListUpdateDto;
 import you_tube_own.dto.profile.ProfileDto;
+import you_tube_own.dto.video.VideoDto;
 import you_tube_own.entity.PlayListEntity;
 import you_tube_own.entity.ProfileEntity;
+import you_tube_own.entity.VideoEntity;
 import you_tube_own.enums.PlayListStatus;
 import you_tube_own.enums.ProfileRole;
 import you_tube_own.exception.AppBadException;
+import you_tube_own.mapper.PlayListMapper;
 import you_tube_own.mapper.PlaylistFullInfoMapper;
+import you_tube_own.mapper.PlaylistShortInfoMapper;
 import you_tube_own.repository.PlaylistRepository;
 import you_tube_own.util.SecurityUtil;
 
+import java.lang.reflect.Type;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -89,39 +102,37 @@ public class PlayListService {
                 .toList();
     }
 
-    public List<PlayListDto> getByCurrentUserId() {
-        Long userId = SecurityUtil.getProfileId();
-        return playlistRepository.getByUserId(userId)
-                .stream()
-                .map(this::toFullInfo)
-                .toList();
-    }
-
     public List<PlayListDto> getByChanelId(String chanelId) {
-        return playlistRepository.findAllByChanelId(chanelId)
+        List<Object[]> resultList = playlistRepository.findAllByChanelId(chanelId);
+
+        return resultList
                 .stream()
-                .map(this::toShortInfo)
+                .map(objects -> {
+                    PlayListDto dto = new PlayListDto();
+                    dto.setId((Long) objects[0]);
+                    dto.setName((String) objects[1]);
+                    dto.setCreatedDate((LocalDateTime) objects[2]);
+                    dto.setVideoCount((Long) objects[5]);
+
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    List<VideoDto> videoList = null;
+                    try {
+                        videoList = objectMapper.readValue(objects[6].toString(), new TypeReference<List<VideoDto>>() {});
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    dto.setVideoList(videoList);
+
+                    // create chanel
+                    ChanelDto chanelDto = new ChanelDto();
+                    chanelDto.setId((String) objects[3]);
+                    chanelDto.setName((String) objects[4]);
+                    dto.setChanel(chanelDto);
+
+                    return dto;
+                })
                 .toList();
-    }
-
-    public PlayListEntity getByPlaylistId(Long playlistId) {
-        return getById(playlistId);
-    }
-
-    private PlayListDto toShortInfo(PlayListEntity entity) {
-        PlayListDto dto = new PlayListDto();
-        dto.setId(entity.getId());
-        dto.setName(entity.getName());
-        dto.setCreatedDate(entity.getCreatedDate());
-        dto.setVideoCount(playlistRepository.videoCount());
-        ///////////// video list
-
-        // create channel
-        ChanelDto chanel = new ChanelDto();
-        chanel.setId(entity.getChanelId());
-        chanel.setName(entity.getName());
-        dto.setChanel(chanel);
-        return dto;
     }
 
     private PlayListDto toFullInfo(PlaylistFullInfoMapper entity) {

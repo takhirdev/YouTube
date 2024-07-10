@@ -6,9 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import you_tube_own.entity.PlayListEntity;
 import you_tube_own.enums.PlayListStatus;
+import you_tube_own.mapper.PlayListMapper;
 import you_tube_own.mapper.PlaylistFullInfoMapper;
+import you_tube_own.mapper.PlaylistShortInfoMapper;
 
 import java.util.List;
 
@@ -23,33 +26,77 @@ public interface PlaylistRepository extends CrudRepository<PlayListEntity, Long>
             " WHERE pl.id = ?1")
     long findOwnerIdByPlaylistId(Long playlistId);
 
-    @Query(" select pl.id, pl.name,pl.description,pl.status, pl.orderNumber," +
-            " ch.id, ch.name, ch.photoId, " +
-            " p.id, p.name, p.surname, p.photoId " +
-            " From PlayListEntity  as pl " +
-            " inner join pl.chanel as ch " +
-            " inner join ch.profile as p " +
+    @Query( " SELECT pl.id AS id," +
+            " pl.name AS name, " +
+            " pl.description AS description," +
+            " pl.status AS status," +
+            " pl.orderNumber AS orderNumber," +
+            " pl.createdDate AS createdDate, " +
+            " ch.id AS chanelId," +
+            " ch.name AS chanelName," +
+            " ch.photoId AS chanelPhotoId, " +
+            " p.id AS profileId," +
+            " p.name AS profileName," +
+            " p.surname AS profileSurname," +
+            " p.photoId AS profilePhotoId " +
+            " FROM PlayListEntity  AS pl " +
+            " INNER JOIN pl.chanel AS ch " +
+            " INNER JOIN ch.profile AS p "+
             " ORDER BY pl.orderNumber DESC ")
     Page<PlaylistFullInfoMapper> findAllBy(Pageable pageable);
 
-    @Query(" select count (p) from PlayListEntity  p ")
-    int videoCount();
 
-    @Query( " select pl.id, pl.name,pl.description,pl.status, pl.orderNumber," +
-            " ch.id, ch.name, ch.photoId, " +
-            " p.id, p.name, p.surname, p.photoId " +
-            " From PlayListEntity  as pl " +
-            " inner join pl.chanel as ch " +
-            " inner join ch.profile as p "+
+    @Query( " SELECT pl.id AS id," +
+            " pl.name AS name, " +
+            " pl.description AS description," +
+            " pl.status AS status," +
+            " pl.orderNumber AS orderNumber," +
+            " pl.createdDate AS createdDate, " +
+            " ch.id AS chanelId," +
+            " ch.name AS chanelName," +
+            " ch.photoId AS chanelPhotoId, " +
+            " p.id AS profileId," +
+            " p.name AS profileName," +
+            " p.surname AS profileSurname," +
+            " p.photoId AS profilePhotoId " +
+            " FROM PlayListEntity  AS pl " +
+            " INNER JOIN pl.chanel AS ch " +
+            " INNER JOIN ch.profile AS p "+
             " WHERE p.id = ?1" +
             " ORDER BY pl.orderNumber DESC ")
     List<PlaylistFullInfoMapper> getByUserId(Long userId);
 
+    @Query( " SELECT " +
+            " p.id AS id, " +
+            " p.name AS name, " +
+            " COUNT(pv.videoId) AS videoCount, " +
+            " SUM(v.viewCount) AS totalViewCount " +
+            " FROM PlayListEntity AS p " +
+            " INNER JOIN PlaylistVideoEntity pv ON p.id = pv.playlistId " +
+            " INNER JOIN VideoEntity v ON pv.videoId = v.id " +
+            " WHERE p.id = ?1 " +
+            " GROUP BY p.id, p.name ")
+    PlayListMapper getById(Long id);
 
-//    @Query( " select pl.id, pl.name, " +
-//            " ch.id, ch.name, (select count (T) from PlayListEntity as T) as videoCount " +
-//            " From PlayListEntity  as pl " +
-//            " inner join pl.chanel as ch " +
-//            " WHERE ch.id = ?1 ")
-    List<PlayListEntity> findAllByChanelId(String chanelId);
+    @Query( " SELECT " +
+            " p.id AS playlistId, " +
+            " p.name AS playlistName, " +
+            " p.createdDate AS playlistCreationDate," +
+            " ch.id AS chanelId, " +
+            " ch.name AS chanelName, " +
+            " COUNT(pv.videoId) AS videoCount, " +
+            " json_agg(json_build_object( " +
+            "        'videoId', v.id, " +
+            "        'title', v.title, " +
+            "        'viewCount', v.viewCount, " +
+            "        'status', v.status " +
+            "    )) AS videos " +
+            " FROM PlayListEntity p " +
+            " INNER JOIN p.chanel AS ch " +
+            " INNER JOIN PlaylistVideoEntity pv ON p.id = pv.playlistId " +
+            " INNER JOIN VideoEntity v ON pv.videoId = v.id " +
+            " WHERE ch.id = ?1 " +
+            " GROUP BY p.id, p.name, ch.id, ch.name ")
+    List<Object[]> findAllByChanelId(String chanelId);
+
 }

@@ -65,7 +65,7 @@ public class PlayListController {
 
     @GetMapping("/currentUser")
     public ResponseEntity<List<PlayListDto>> getByCurrentUserId() {
-        List<PlayListDto> response = playListService.getByCurrentUserId();
+        List<PlayListDto> response = playListService.getByUserId(SecurityUtil.getProfileId());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -75,9 +75,9 @@ public class PlayListController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/byId")  ////////  MAZGI BU CHALA QOLDI
-    public ResponseEntity<PlayListEntity> getByPlaylistId(@RequestParam Long playlistId) {
-        PlayListEntity response = playListService.getByPlaylistId(playlistId);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
+//    @GetMapping("/byId")
+//    public ResponseEntity<PlayListDto> getByPlaylistId(@RequestParam Long playlistId) {
+//        PlayListDto response = playListService.getByPlaylistId(playlistId);
+//        return ResponseEntity.status(HttpStatus.OK).body(response);
+//    }
 }

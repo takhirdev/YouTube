@@ -6,34 +6,35 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
+import you_tube_own.enums.ReactionType;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name = "playlist_video")
-public class PlaylistVideoEntity {
-
+@Table(name = "video_like")
+public class VideoLikeEntity {
     @Id
     @UuidGenerator
     private String id;
 
-    @Column(name = "playlist_id")
-    private Long playlistId;
+    @Column(name = "profile_id")
+    private Long profileId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "playlist_id", insertable = false, updatable = false)
-    private PlayListEntity playList;
+    @JoinColumn(name = "profile_id", insertable = false, updatable = false)
+    private ProfileEntity profile;
 
-    @Column(name = "video_id", unique = true, nullable = false)
+    @Column(name = "video_id")
     private String videoId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "video_id", insertable = false, updatable = false)
     private VideoEntity video;
 
-    @Column(name = "order_number",unique = true, nullable = false)
-    private Integer orderNumber;
+    @Column(name = "reaction")
+    @Enumerated(EnumType.STRING)
+    private ReactionType reaction;
 
     @Builder.Default
     @Column(name = "created_date")
