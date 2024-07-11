@@ -86,7 +86,7 @@ public interface PlaylistRepository extends CrudRepository<PlayListEntity, Long>
             " ch.name AS chanelName, " +
             " COUNT(pv.videoId) AS videoCount, " +
             " json_agg(json_build_object( " +
-            "        'videoId', v.id, " +
+            "        'id', v.id, " +
             "        'title', v.title, " +
             "        'viewCount', v.viewCount, " +
             "        'status', v.status " +

@@ -75,9 +75,9 @@ public class PlayListController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-//    @GetMapping("/byId")
-//    public ResponseEntity<PlayListDto> getByPlaylistId(@RequestParam Long playlistId) {
-//        PlayListDto response = playListService.getByPlaylistId(playlistId);
-//        return ResponseEntity.status(HttpStatus.OK).body(response);
-//    }
+    @GetMapping("/byId")
+    public ResponseEntity<PlayListDto> getByPlaylistId(@RequestParam Long playlistId) {
+        PlayListDto response = playListService.getByPlaylistId(playlistId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }

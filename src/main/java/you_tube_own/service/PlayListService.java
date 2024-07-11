@@ -104,7 +104,6 @@ public class PlayListService {
 
     public List<PlayListDto> getByChanelId(String chanelId) {
         List<Object[]> resultList = playlistRepository.findAllByChanelId(chanelId);
-
         return resultList
                 .stream()
                 .map(objects -> {
@@ -133,6 +132,16 @@ public class PlayListService {
                     return dto;
                 })
                 .toList();
+    }
+
+    public PlayListDto getByPlaylistId(Long playlistId) {
+        PlayListMapper mapper = playlistRepository.getById(playlistId);
+        return PlayListDto.builder()
+                .id(mapper.getId())
+                .name(mapper.getName())
+                .videoCount(mapper.getVideoCount())
+                .totalViewCount(mapper.getTotalViewCount())
+                .build();
     }
 
     private PlayListDto toFullInfo(PlaylistFullInfoMapper entity) {
