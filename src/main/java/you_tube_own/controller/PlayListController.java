@@ -2,20 +2,16 @@ package you_tube_own.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.LifecycleState;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import you_tube_own.dto.playList.PlayListCreateDto;
 import you_tube_own.dto.playList.PlayListDto;
 import you_tube_own.dto.playList.PlayListUpdateDto;
-import you_tube_own.entity.PlayListEntity;
 import you_tube_own.enums.PlayListStatus;
 import you_tube_own.service.PlayListService;
 import you_tube_own.util.SecurityUtil;
-
 import java.util.List;
 
 @RestController

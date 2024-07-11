@@ -2,10 +2,7 @@ package you_tube_own.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,19 +17,14 @@ import you_tube_own.dto.profile.ProfileDto;
 import you_tube_own.dto.video.VideoDto;
 import you_tube_own.entity.PlayListEntity;
 import you_tube_own.entity.ProfileEntity;
-import you_tube_own.entity.VideoEntity;
 import you_tube_own.enums.PlayListStatus;
 import you_tube_own.enums.ProfileRole;
 import you_tube_own.exception.AppBadException;
 import you_tube_own.mapper.PlayListMapper;
 import you_tube_own.mapper.PlaylistFullInfoMapper;
-import you_tube_own.mapper.PlaylistShortInfoMapper;
 import you_tube_own.repository.PlaylistRepository;
 import you_tube_own.util.SecurityUtil;
-
-import java.lang.reflect.Type;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 

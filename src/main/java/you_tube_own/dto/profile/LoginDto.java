@@ -9,10 +9,10 @@ import lombok.Setter;
 @Setter
 public class LoginDto {
     @NotBlank(message = "username is required")
-    @Size(min = 5, max = 20, message = "username must be at least 5 characters")
+    @Size(min = 5,  message = "username must be at least 5 characters")
     private String username;
 
-    @Size(min = 7, max = 20, message = "password must be at least 7 characters")
+    @Size(min = 4, message = "password must be at least 4 characters")
     @NotBlank(message = "password is required")
     private String password;
 }

@@ -6,12 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import you_tube_own.entity.PlayListEntity;
 import you_tube_own.enums.PlayListStatus;
 import you_tube_own.mapper.PlayListMapper;
 import you_tube_own.mapper.PlaylistFullInfoMapper;
-import you_tube_own.mapper.PlaylistShortInfoMapper;
 
 import java.util.List;
 

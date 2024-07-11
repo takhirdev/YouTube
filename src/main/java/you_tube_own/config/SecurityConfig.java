@@ -56,13 +56,14 @@ public class SecurityConfig {
                     .requestMatchers("/profile/**").hasAnyRole("USER", "ADMIN")
                     .requestMatchers("/attach/**").permitAll()
                     .requestMatchers("/chanel/**").permitAll()
-                    .requestMatchers("/video/**").hasAnyRole("USER", "ADMIN")
+                    .requestMatchers("/video/**").permitAll()
                     .requestMatchers("/category/**").permitAll()
                     .requestMatchers("/playlist_video/**").permitAll()
                     .requestMatchers("/video_tag/**").permitAll()
                     .requestMatchers("/tag/**").permitAll()
                     .requestMatchers("/comment/**").permitAll()
                     .requestMatchers("/comment_like/**").permitAll()
+                    .requestMatchers("/video_like/**").permitAll()
                     .requestMatchers("/playlist/**").hasAnyRole("USER", "ADMIN")
 
                     // swagger
