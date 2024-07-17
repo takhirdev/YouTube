@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PlayListDto {
-    private Long id;
+    private String id;
     private String name;
     private String description;
     private PlayListStatus status;

@@ -2,6 +2,7 @@ package you_tube_own.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONArray;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +22,8 @@ public class PlayListController {
     private final PlayListService playListService;
 
     @PostMapping("/create")
-    public ResponseEntity<Long> create(@Valid @RequestBody PlayListCreateDto dto) {
-        long response = playListService.create(dto);
+    public ResponseEntity<String> create(@Valid @RequestBody PlayListCreateDto dto) {
+        String response = playListService.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -67,8 +68,7 @@ public class PlayListController {
 
     @GetMapping("/byChanelId/{chanelId}")
     public ResponseEntity<List<PlayListDto>> getByChanelId(@PathVariable String chanelId) {
-        List<PlayListDto> response = playListService.getByChanelId(chanelId);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(playListService.getByChanelId(chanelId));
     }
 
     @GetMapping("/byId")

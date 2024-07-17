@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import you_tube_own.enums.VidoeType;
 
+import java.util.List;
+
 @Data
 public class VideoCreateDto {
 
@@ -14,8 +16,6 @@ public class VideoCreateDto {
     @NotBlank(message = "title required")
     private String title;
 
-//    @NotBlank(message = "description required")
-//    @Size(min = 10, message = "description must be at least 10 characters")
     private String description;
 
     @NotNull(message = "category id required")
@@ -29,4 +29,8 @@ public class VideoCreateDto {
 
     @NotNull(message = "chanel id required")
     private String chanelId;
+
+    private List<String> tagList;
+
+    private String playlistId;
 }

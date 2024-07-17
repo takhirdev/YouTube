@@ -1,5 +1,7 @@
 package you_tube_own.service;
 
+import jakarta.persistence.Table;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -10,8 +12,8 @@ import you_tube_own.dto.tag.TagDto;
 import you_tube_own.entity.TagEntity;
 import you_tube_own.exception.AppBadException;
 import you_tube_own.repository.TagRepository;
-import java.util.LinkedList;
-import java.util.List;
+
+import java.util.*;
 
 
 @Service
@@ -62,7 +64,7 @@ public class TagService {
                 .map(this::toDto)
                 .toList();
         long totalElements = entityPage.getTotalElements();
-        return new PageImpl<>(list,pageable,totalElements);
+        return new PageImpl<>(list, pageable, totalElements);
     }
 
     public TagEntity findById(Integer id) {

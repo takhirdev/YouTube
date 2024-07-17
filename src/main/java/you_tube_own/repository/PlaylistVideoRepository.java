@@ -13,7 +13,7 @@ public interface PlaylistVideoRepository extends CrudRepository<PlaylistVideoEnt
 
     @Transactional
     @Modifying
-    int deleteByPlaylistIdAndVideoId(Long playlistId, String videoId);
+    int deleteByPlaylistIdAndVideoId(String playlistId, String videoId);
 
     @Query( " SELECT p.playlistId AS playlistId, p.createdDate AS createdDate, p.orderNumber AS orderNumber, " +
             " v.id AS videoId, v.title AS videoTitle, v.previewAttachId AS previewAttachId, " +

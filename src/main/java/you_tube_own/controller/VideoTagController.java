@@ -17,19 +17,6 @@ import java.util.List;
 public class VideoTagController {
     private final VideoTagService videoTagService;
 
-    @PostMapping("/create")
-    public ResponseEntity<String> create (@Valid @RequestBody VideoTagCreateDto dto){
-        String response = videoTagService.create(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> delete (@RequestParam String videoId,
-                                          @RequestParam String tagId){
-        String response = videoTagService.delete(videoId,tagId);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
     @GetMapping("/getTagByVideoId/{videoId}")
     public ResponseEntity<List<VideoTagDto>> getTagByVideoId (@PathVariable String videoId){
         List<VideoTagDto> response = videoTagService.getTagByVideoId(videoId);

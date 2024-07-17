@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PlaylistVideoCreateDto {
     @NotNull(message = "playlist id required")
-    private Long playlistId;
+    private String playlistId;
 
     @NotBlank(message = "video id required")
     private String videoId;

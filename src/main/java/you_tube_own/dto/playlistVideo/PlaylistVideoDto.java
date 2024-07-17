@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PlaylistVideoDto {
     private String id;
-    private Long playlistId;
+    private String playlistId;
     private PlayListDto playList;
     private String videoId;
     private VideoDto video;

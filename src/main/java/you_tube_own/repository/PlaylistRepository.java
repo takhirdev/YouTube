@@ -64,7 +64,7 @@ public interface PlaylistRepository extends CrudRepository<PlayListEntity, Long>
             " ORDER BY pl.orderNumber DESC ")
     List<PlaylistFullInfoMapper> getByUserId(Long userId);
 
-    @Query( " SELECT " +
+    @Query(" SELECT " +
             " p.id AS id, " +
             " p.name AS name, " +
             " COUNT(pv.videoId) AS videoCount, " +

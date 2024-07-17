@@ -14,6 +14,6 @@ public interface VideoShortInfoForAdmin{
     Long getProfileId();
     String getProfileName();
     String getProfileSurname();
-    Long getPlaylistId();
+    String getPlaylistId();
     String getPlaylistName();
 }

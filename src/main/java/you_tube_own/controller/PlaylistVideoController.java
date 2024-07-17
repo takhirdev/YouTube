@@ -32,7 +32,7 @@ public class PlaylistVideoController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> delete(@RequestParam Long playlistId,
+    public ResponseEntity<String> delete(@RequestParam String playlistId,
                                          @RequestParam String videoId) {
         String response = pLaylistVideoService.delete(playlistId, videoId);
         return ResponseEntity.status(HttpStatus.OK).body(response);

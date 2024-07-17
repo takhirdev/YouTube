@@ -52,7 +52,7 @@ public class PLaylistVideoService {
                 .build();
     }
 
-    public String delete(Long playlistId, String videoId) {
+    public String delete(String playlistId, String videoId) {
         int effectedRows = playlistVideoRepository.deleteByPlaylistIdAndVideoId(playlistId, videoId);
         if (effectedRows == 0) {
             throw new AppBadException("not deleted playlist video");

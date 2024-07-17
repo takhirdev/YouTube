@@ -5,7 +5,7 @@ import you_tube_own.enums.PlayListStatus;
 import java.time.LocalDateTime;
 
 public interface PlaylistFullInfoMapper {
-    Long getId();
+    String getId();
     String getName();
     String getDescription();
     PlayListStatus getStatus();

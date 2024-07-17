@@ -4,10 +4,12 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import you_tube_own.entity.VideoTagEntity;
 import you_tube_own.mapper.VideoTagMapper;
 
 import java.util.List;
+import java.util.Set;
 
 public interface VideoTagRepository extends CrudRepository<VideoTagEntity, String> {
 
@@ -21,4 +23,15 @@ public interface VideoTagRepository extends CrudRepository<VideoTagEntity, Strin
             " INNER JOIN v.tag AS t " +
             " WHERE v.videoId = ?1 ")
     List<VideoTagMapper> findAllByVideoId(String videoId);
+
+    @Query(" select t.id from VideoTagEntity as vt " +
+            " inner join vt.tag as t" +
+            " where vt.videoId = ?1 ")
+    List<String> findAllTagsIdByVideoId(String videoId);
+
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM VideoTagEntity vt WHERE vt.videoId = :videoId AND vt.tagId IN :taglist")
+    void deleteAllByVideoIdAndTagList(@Param("videoId") String videoId, @Param("taglist") List<String> taglist);
 }

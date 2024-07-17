@@ -34,7 +34,7 @@ public class PlayListService {
     private final PlaylistRepository playlistRepository;
     private final AttachService attachService;
 
-    public long create(PlayListCreateDto dto) {
+    public String create(PlayListCreateDto dto) {
         var entity = PlayListEntity.builder()
                 .name(dto.getName())
                 .description(dto.getDescription())
@@ -96,11 +96,24 @@ public class PlayListService {
 
     public List<PlayListDto> getByChanelId(String chanelId) {
         List<Object[]> resultList = playlistRepository.findAllByChanelId(chanelId);
+//        JSONArray playlist = new JSONArray();
+//        for (Object[] o : resultList) {
+//            JSONObject obj = new JSONObject();
+//            obj.put("playlistId", MapperUtil.getLongValue(o[0]));
+//            obj.put("playlistName", MapperUtil.getStringValue(o[1]));
+//            obj.put("playlistCreationDate", (o[2]));
+//            obj.put("chanelId", MapperUtil.getStringValue(o[3]));
+//            obj.put("chanelName", MapperUtil.getStringValue(o[4]));
+//            obj.put("videoCount", MapperUtil.getLongValue(o[5]));
+//            obj.put("videos", new JSONArray(MapperUtil.getStringValue(o[6])));
+//            playlist.put(obj);
+//        }
+//        return playlist;
         return resultList
                 .stream()
                 .map(objects -> {
                     PlayListDto dto = new PlayListDto();
-                    dto.setId((Long) objects[0]);
+                    dto.setId((String) objects[0]);
                     dto.setName((String) objects[1]);
                     dto.setCreatedDate((LocalDateTime) objects[2]);
                     dto.setVideoCount((Long) objects[5]);
@@ -136,7 +149,7 @@ public class PlayListService {
                 .build();
     }
 
-    private PlayListDto toFullInfo(PlaylistFullInfoMapper entity) {
+    private PlayListDto  toFullInfo(PlaylistFullInfoMapper entity) {
         // create playlist
         PlayListDto dto = new PlayListDto();
         dto.setId(entity.getId());

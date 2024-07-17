@@ -2,6 +2,7 @@ package you_tube_own.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 import you_tube_own.enums.PlayListStatus;
 
 import java.time.LocalDateTime;
@@ -15,8 +16,8 @@ import java.util.List;
 @Table(name = "playlist")
 public class PlayListEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private String id;
 
     @Column(name = "chanel_id")
     private String chanelId;

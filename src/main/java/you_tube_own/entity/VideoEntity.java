@@ -84,5 +84,4 @@ public class VideoEntity {
     @Column(name = "chanel_id")
     private String chanelId;
 
-//    private List<Integer> tagList;
 }

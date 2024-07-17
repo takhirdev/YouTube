@@ -1,5 +1,7 @@
 package you_tube_own.service;
 
+import com.sun.jdi.event.StepEvent;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import you_tube_own.dto.tag.TagDto;
@@ -9,29 +11,49 @@ import you_tube_own.entity.VideoTagEntity;
 import you_tube_own.exception.AppBadException;
 import you_tube_own.repository.VideoTagRepository;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class VideoTagService {
     private final VideoTagRepository videoTagRepository;
 
-    public String create(VideoTagCreateDto dto) {
-        var entity = VideoTagEntity.builder()
-                .videoId(dto.getVideoId())
-                .tagId(dto.getTagId())
-                .build();
+    @Transactional
+    public void merge(String videoId, List<String> newList) {
+        Objects.requireNonNull(newList, "New types list must not be null");
+        List<String> oldList = videoTagRepository.findAllTagsIdByVideoId(videoId);
+        if (oldList.isEmpty()) {
+            bulkInsert(videoId, newList);
+            return;
+        }
 
-        videoTagRepository.save(entity);
-        return entity.getId();
+        Set<String> toDelete = new HashSet<>(oldList);
+        newList.forEach(toDelete::remove);
+
+        Set<String> toAdd = new HashSet<>(newList);
+        oldList.forEach(toAdd::remove);
+
+        if (!toAdd.isEmpty()) {
+            bulkInsert(videoId, new ArrayList<>(toAdd));
+        }
+
+        if (!toDelete.isEmpty()) {
+            videoTagRepository.deleteAllByVideoIdAndTagList(videoId, new ArrayList<>(toDelete));
+        }
     }
 
-    public String delete(String videoId, String tagId) {
-        int effectedRows = videoTagRepository.deleteByVideoIdAndTagId(videoId, tagId);
-        if (effectedRows == 0) {
-            throw new AppBadException("delete failed");
-        }
-        return "successfully deleted";
+    private void bulkInsert(String videoId, List<String> tagsId) {
+        List<VideoTagEntity> entities = tagsId.stream()
+                .map(tagId -> {
+                    VideoTagEntity entity = new VideoTagEntity();
+                    entity.setVideoId(videoId);
+                    entity.setTagId(tagId);
+                    return entity;
+                })
+                .collect(Collectors.toList());
+
+        videoTagRepository.saveAll(entities);
     }
 
     public List<VideoTagDto> getTagByVideoId(String videoId) {

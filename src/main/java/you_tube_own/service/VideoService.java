@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import you_tube_own.dto.category.CategoryDto;
 import you_tube_own.dto.chanel.ChanelDto;
 import you_tube_own.dto.playList.PlayListDto;
+import you_tube_own.dto.playlistVideo.PlaylistVideoCreateDto;
 import you_tube_own.dto.profile.ProfileDto;
 import you_tube_own.dto.video.VideoCreateDto;
 import you_tube_own.dto.video.VideoDto;
@@ -27,11 +28,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VideoService {
     private final VideoRepository videoRepository;
+    private final VideoTagService videoTagService;
 
     public String create(VideoCreateDto dto) {
         var entity = VideoEntity.builder()
                 .previewAttachId(dto.getPreviewAttachId())
                 .title(dto.getTitle())
+                .description(dto.getDescription())
                 .categoryId(dto.getCategoryId())
                 .attachId(dto.getAttachId())
                 .type(dto.getType())
@@ -39,6 +42,7 @@ public class VideoService {
                 .build();
 
         videoRepository.save(entity);
+        videoTagService.merge(entity.getId(),dto.getTagList());
         return entity.getId();
     }
 

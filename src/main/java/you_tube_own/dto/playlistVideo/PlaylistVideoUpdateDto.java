@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlaylistVideoUpdateDto {
-    private Long playlistId;
+    private String playlistId;
     private String videoId;
     private Integer orderNumber;
 }
